@@ -1,87 +1,87 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI; // ³×ÀÓ½ºÆäÀÌ½º Ãß°¡
-using UnityEngine.EventSystems;// ³×ÀÓ ½ºÆäÀÌ½º Ãß°¡
+using UnityEngine.UI; // ë„¤ì„ìŠ¤í˜ì´ìŠ¤ ì¶”ê°€
+using UnityEngine.EventSystems;// ë„¤ì„ ìŠ¤í˜ì´ìŠ¤ ì¶”ê°€
 
 public class Player_Move : MonoBehaviour
 {
-    // Å° °ª
+    // í‚¤ ê°’
     float hdown;
     float vdown;
-    bool roll; // ±¸¸£±â¿¡ ´ëÇÑ º¯¼ö!
-    bool isRoll; // ¹«ÇÑ ±¸¸£±â¸¦ ¸·±â À§ÇÑ º¯¼ö!
+    bool roll; // êµ¬ë¥´ê¸°ì— ëŒ€í•œ ë³€ìˆ˜!
+    bool isRoll; // ë¬´í•œ êµ¬ë¥´ê¸°ë¥¼ ë§‰ê¸° ìœ„í•œ ë³€ìˆ˜!
 
-    // ±âº» ¿òÁ÷ÀÓ
+    // ê¸°ë³¸ ì›€ì§ì„
     public float moveSpeed = 10.0f;
     Vector3 dir;
 
-    // ¾Ö´Ï¸ŞÀÌÅÍ
+    // ì• ë‹ˆë©”ì´í„°
     public Animator ani;
 
-    [HideInInspector] //<-PublicÀÎ½ºÆåÅÍÃ¢¿¡¼­ º¸¿©ÁöÁö¾Ê°Ô ÇÏ±â
-    //¿Ã·ÁÄ¡±â ½ºÅ³ÀÌ ½ÇÇàÀÌ µÇ¸é ÇÃ·¹ÀÌ¾îÀÇ °ø°İ,±¸¸£±â,¿òÁ÷ÀÓÀ» ¸·À» boolº¯¼ö
+    [HideInInspector] //<-Publicì¸ìŠ¤í™í„°ì°½ì—ì„œ ë³´ì—¬ì§€ì§€ì•Šê²Œ í•˜ê¸°
+    //ì˜¬ë ¤ì¹˜ê¸° ìŠ¤í‚¬ì´ ì‹¤í–‰ì´ ë˜ë©´ í”Œë ˆì´ì–´ì˜ ê³µê²©,êµ¬ë¥´ê¸°,ì›€ì§ì„ì„ ë§‰ì„ boolë³€ìˆ˜
     public bool AttackUp;
 
 
     // public InventoryStart inventory;
     void Awake()
     {
-        // ÀÚ½ÄÀÇ ¾Ö´Ï¸ŞÀÌÅÍ ÄÄÆ÷³ÍÆ®¸¦ ºÒ·¯¿Â´Ù.
+        // ìì‹ì˜ ì• ë‹ˆë©”ì´í„° ì»´í¬ë„ŒíŠ¸ë¥¼ ë¶ˆëŸ¬ì˜¨ë‹¤.
         ani = GetComponentInChildren<Animator>();
     }
     void Update()
     {
-        // Å° °ª ÀÔ·Â
+        // í‚¤ ê°’ ì…ë ¥
         hdown = Input.GetAxis("Horizontal");
-        vdown = Input.GetAxis("Vertical"); // ¹æÇâÅ° Å° °ª ÀÔ·Â
-        roll = Input.GetButtonDown("Jump");// ½ºÆäÀÌ½º¹Ù Å¬¸¯À¸·Î ±¸¸£±â!
+        vdown = Input.GetAxis("Vertical"); // ë°©í–¥í‚¤ í‚¤ ê°’ ì…ë ¥
+        roll = Input.GetButtonDown("Jump");// ìŠ¤í˜ì´ìŠ¤ë°” í´ë¦­ìœ¼ë¡œ êµ¬ë¥´ê¸°!
 
-        if (!SceneLoadManager.Instance.isLoading && !Player_Data.Instance.playerData.isDie)
-            //·Îµù ÁßÀÌ ¾Æ´Ò ¶§ + PlayerData¿¡¼­ false¸é ÀÌ ÇÔ¼ö ½ÇÇà, true¸é ½ÇÇàX
+        if (!IsUnReady())
+            //ë¡œë”© ì¤‘ì´ ì•„ë‹ ë•Œ + PlayerDataì—ì„œ falseë©´ ì´ í•¨ìˆ˜ ì‹¤í–‰, trueë©´ ì‹¤í–‰X
         {
-            // ÇÔ¼ö Á¤¸®
-            Move(); // ¿òÁ÷ÀÓ
-            Roll(); // ±¸¸£±â¿¡ °üÇÑ Å¬·¡½º Ãß°¡!
+            // í•¨ìˆ˜ ì •ë¦¬
+            Move(); // ì›€ì§ì„
+            Roll(); // êµ¬ë¥´ê¸°ì— ê´€í•œ í´ë˜ìŠ¤ ì¶”ê°€!
         }
     }
 
-    // ¿òÁ÷ÀÓ
+    // ì›€ì§ì„
     void Move()
     {
-        // AttackUpÀÌ false¶ó¸é
+        // AttackUpì´ falseë¼ë©´
         if (!AttackUp)
         {
-            // ¹æÇâ Á¤±ÔÈ­
+            // ë°©í–¥ ì •ê·œí™”
             dir = new Vector3(hdown, 0, vdown).normalized;
 
-            // isWalk ÆÄ¶ó¹ÌÅÍ ¾Ö´Ï¸ŞÀÌ¼Ç
+            // isWalk íŒŒë¼ë¯¸í„° ì• ë‹ˆë©”ì´ì…˜
             ani.SetFloat("isWalk", dir.magnitude);
 
-            // ÇÃ·¹ÀÌ¾î ¿òÁ÷ÀÌ±â
+            // í”Œë ˆì´ì–´ ì›€ì§ì´ê¸°
             transform.position += dir * Player_Data.Instance.playerData.Speed * Time.deltaTime;
 
-            // °¡´Â ¹æÇâ º¤ÅÍ°ªÀ¸·Î ¹Ù¶óº¸±â
+            // ê°€ëŠ” ë°©í–¥ ë²¡í„°ê°’ìœ¼ë¡œ ë°”ë¼ë³´ê¸°
             transform.LookAt(transform.position + dir);
         }
     }
 
-    // ±¸¸£±â
+    // êµ¬ë¥´ê¸°
     void Roll()
     {
-        // AttackUpÀÌ false¶ó¸é
+        // AttackUpì´ falseë¼ë©´
         if (!AttackUp)
         {
-            //±¸¸£±â ½ÇÇà
-            // ±¸¸£±â ¹öÆ°ÀÌ ´­·È°Å³ª ±¸¸£±â °¡´É »óÅÂ º¯¼ö°¡ falseÀÏ ¶§
+            //êµ¬ë¥´ê¸° ì‹¤í–‰
+            // êµ¬ë¥´ê¸° ë²„íŠ¼ì´ ëˆŒë ¸ê±°ë‚˜ êµ¬ë¥´ê¸° ê°€ëŠ¥ ìƒíƒœ ë³€ìˆ˜ê°€ falseì¼ ë•Œ
             if (roll && !isRoll)
             {
-                // ±¸¸£±â °¡´É »óÅÂ º¯¼ö´Â true
+                // êµ¬ë¥´ê¸° ê°€ëŠ¥ ìƒíƒœ ë³€ìˆ˜ëŠ” true
                 isRoll = true;
 
-                Debug.Log("±¸¸£±â");
+                Debug.Log("êµ¬ë¥´ê¸°");
 
-                // ±¸¸£´Â ¾Ö´Ï¸ŞÀÌ¼Ç ÀÛµ¿
+                // êµ¬ë¥´ëŠ” ì• ë‹ˆë©”ì´ì…˜ ì‘ë™
                 ani.SetTrigger("doRoll");
 
                 Player_Data.Instance.audioSource.clip = Player_Data.Instance.audioClips[0];
@@ -90,24 +90,24 @@ public class Player_Move : MonoBehaviour
         }
     }
 
-    // Ãæµ¹ÇÏ°í ÀÖ´Â »óÅÂ¶ó¸é
+    // ì¶©ëŒí•˜ê³  ìˆëŠ” ìƒíƒœë¼ë©´
     void OnCollisionStay(Collision collision)
     {
-        // ºÎ‹HÈ÷´Â ¹°Ã¼ÀÇ ÅÂ±×°¡ ¹Ù´ÚÀÌ¸é
+        // ë¶€Â‹HíˆëŠ” ë¬¼ì²´ì˜ íƒœê·¸ê°€ ë°”ë‹¥ì´ë©´
         if (collision.gameObject.tag == "Ground")
         {
-            // ±¸¸£±â °¡´É »óÅÂ º¯¼ö°¡ false°¡ µÈ´Ù!
+            // êµ¬ë¥´ê¸° ê°€ëŠ¥ ìƒíƒœ ë³€ìˆ˜ê°€ falseê°€ ëœë‹¤!
             isRoll = false;
         }
     }
 
-    // Ãæµ¹ »óÅÂ¸¦ ºüÁ®³ª°£ ¼ø°£
+    // ì¶©ëŒ ìƒíƒœë¥¼ ë¹ ì ¸ë‚˜ê°„ ìˆœê°„
     void OnCollisionExit(Collision collision)
     {
-        // Ãæµ¹À» ºüÁ®³ª°£ °ÔÀÓ¿ÀºêÁ§Æ® tag°¡ Floor¶ó¸é
+        // ì¶©ëŒì„ ë¹ ì ¸ë‚˜ê°„ ê²Œì„ì˜¤ë¸Œì íŠ¸ tagê°€ Floorë¼ë©´
         if (collision.gameObject.tag == "Ground")
         {
-            // ±¸¸£±â °¡´É »óÅÂ º¯¼ö¸¦ true·Î ¹Ù²Ù¾î¶ó.
+            // êµ¬ë¥´ê¸° ê°€ëŠ¥ ìƒíƒœ ë³€ìˆ˜ë¥¼ trueë¡œ ë°”ê¾¸ì–´ë¼.
             isRoll = true;
         }
     }
@@ -120,8 +120,8 @@ public class Player_Move : MonoBehaviour
         isUnReady.Add(UI_ChatLog.Instance.inputField.isFocused);
         isUnReady.Add(Player_Data.Instance.playerData.isDie);
 
-        isUnReady.TrimExcess(); //ºÒÇÊ¿äÇÑ ¸Ş¸ğ¸® ¹İÈ¯
+        isUnReady.TrimExcess(); //ë¶ˆí•„ìš”í•œ ë©”ëª¨ë¦¬ ë°˜í™˜
 
-        return isUnReady.Contains(true); //À§ Á¶°Ç Áß ÇÏ³ª¶óµµ µé¾î¸Â´ÂÁö ÆÇ´Ü
+        return isUnReady.Contains(true); //ìœ„ ì¡°ê±´ ì¤‘ í•˜ë‚˜ë¼ë„ ë“¤ì–´ë§ëŠ”ì§€ íŒë‹¨
     }
 }
