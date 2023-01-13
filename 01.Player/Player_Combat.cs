@@ -1,103 +1,103 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.EventSystems;// ³×ÀÓ ½ºÆäÀÌ½º Ãß°¡
+using UnityEngine.EventSystems;// ë„¤ì„ ìŠ¤í˜ì´ìŠ¤ ì¶”ê°€
 
 public class Player_Combat : MonoBehaviour
 {
-    public PlayerData playerData; //ÇÃ·¹ÀÌ¾î µ¥ÀÌÅÍ
-    public Animator ani;   //¾Ö´Ï¸ŞÀÌÅÍ
+    public PlayerData playerData; //í”Œë ˆì´ì–´ ë°ì´í„°
+    public Animator ani;   //ì• ë‹ˆë©”ì´í„°
 
-    //ÇÃ·¹ÀÌ¾î Á¶ÀÛ(ÀÔ·Â) º¯¼ö
-    bool fdown; //°ø°İ
-    bool sdown; //½ºÅ³
+    //í”Œë ˆì´ì–´ ì¡°ì‘(ì…ë ¥) ë³€ìˆ˜
+    bool fdown; //ê³µê²©
+    bool sdown; //ìŠ¤í‚¬
 
-    // °ø°İ °ü·Ã º¯¼ö
+    // ê³µê²© ê´€ë ¨ ë³€ìˆ˜
     //Rigidbody rid;
-    public Collider sword; //public GameObject sword ¿¡¼­ -> public Collider sword·Î º¯°æ
+    public Collider sword; //public GameObject sword ì—ì„œ -> public Collider swordë¡œ ë³€ê²½
     BoxCollider boxCollider;
 
-    // ÇÇ°İ °ü·Ã º¯¼ö
-    public Collider Punch;//Attack ¿ÀºêÁ§Æ®¸¦ ´ã¾ÆÁÙ ColliderÅ¸ÀÔ º¯¼ö ¼±¾ğ
+    // í”¼ê²© ê´€ë ¨ ë³€ìˆ˜
+    public Collider Punch;//Attack ì˜¤ë¸Œì íŠ¸ë¥¼ ë‹´ì•„ì¤„ Collideríƒ€ì… ë³€ìˆ˜ ì„ ì–¸
 
     Rigidbody rigid;
-    //ÀÌ ¿ÀºêÁ§Æ®ÀÇ ¸®Áöµå¹Ùµğ ÄÄÆ÷³ÍÆ®
+    //ì´ ì˜¤ë¸Œì íŠ¸ì˜ ë¦¬ì§€ë“œë°”ë”” ì»´í¬ë„ŒíŠ¸
 
-    // ÇÃ·¹ÀÌ¾î°¡ Á×¾úÀ» ¶§ ÁÖº¯ ¸ó½ºÅÍµéÀÌ ½Â¸® ¾×¼ÇÀ» ÃëÇÏ°Ô ÇÒ º¯¼ö
-    Collider[] monsters; // ÇÃ·¹ÀÌ¾î ÁÖº¯ ¹İ°æ ¾È ¸ó½ºÅÍÀÇ Äİ¶óÀÌ´õ¸¦ ¹ŞÀ» ¹è¿­ º¯¼ö 
-    public float limitDetectRange = 50f; // Äİ¶óÀÌ´õ¸¦ °¨ÁöÇÏ±â À§ÇÑ ¹üÀ§ Á¦ÇÑ °Å¸®¸¦ °áÁ¤ÇÒ º¯¼ö
+    // í”Œë ˆì´ì–´ê°€ ì£½ì—ˆì„ ë•Œ ì£¼ë³€ ëª¬ìŠ¤í„°ë“¤ì´ ìŠ¹ë¦¬ ì•¡ì…˜ì„ ì·¨í•˜ê²Œ í•  ë³€ìˆ˜
+    Collider[] monsters; // í”Œë ˆì´ì–´ ì£¼ë³€ ë°˜ê²½ ì•ˆ ëª¬ìŠ¤í„°ì˜ ì½œë¼ì´ë”ë¥¼ ë°›ì„ ë°°ì—´ ë³€ìˆ˜ 
+    public float limitDetectRange = 50f; // ì½œë¼ì´ë”ë¥¼ ê°ì§€í•˜ê¸° ìœ„í•œ ë²”ìœ„ ì œí•œ ê±°ë¦¬ë¥¼ ê²°ì •í•  ë³€ìˆ˜
 
     void Awake()
     {
-        // ÀÚ½ÄÀÇ ¾Ö´Ï¸ŞÀÌÅÍ ÄÄÆ÷³ÍÆ®¸¦ ºÒ·¯¿Â´Ù.
+        // ìì‹ì˜ ì• ë‹ˆë©”ì´í„° ì»´í¬ë„ŒíŠ¸ë¥¼ ë¶ˆëŸ¬ì˜¨ë‹¤.
         ani = GetComponentInChildren<Animator>();
 
-        // ¹«±â ¿ÀºêÁ§Æ®ÀÇ ¹Ú½ºÄİ¶óÀÌ´õ ÄÄÆ÷³ÍÆ®¸¦ ºÒ·¯¿Â´Ù.
+        // ë¬´ê¸° ì˜¤ë¸Œì íŠ¸ì˜ ë°•ìŠ¤ì½œë¼ì´ë” ì»´í¬ë„ŒíŠ¸ë¥¼ ë¶ˆëŸ¬ì˜¨ë‹¤.
         boxCollider = sword.GetComponent<BoxCollider>();
 
-        // ¸®Áöµå¹Ùµğ ÄÄÆ÷³ÍÆ®¸¦ ºÒ·¯¿Â´Ù.
+        // ë¦¬ì§€ë“œë°”ë”” ì»´í¬ë„ŒíŠ¸ë¥¼ ë¶ˆëŸ¬ì˜¨ë‹¤.
         rigid = GetComponent<Rigidbody>();
     }
 
     void Start()
     {
-        //ÇÃ·¹ÀÌ¾î µ¥ÀÌÅÍ ÄÄÆ÷³ÍÆ®¸¦ ºÒ·¯¿Â´Ù.
+        //í”Œë ˆì´ì–´ ë°ì´í„° ì»´í¬ë„ŒíŠ¸ë¥¼ ë¶ˆëŸ¬ì˜¨ë‹¤.
         playerData = Player_Data.Instance.playerData;
 
-        playerData.Hp = playerData.MaxHp; //Ã¼·Â ÃÊ±âÈ­
-        playerData.Mp = playerData.MaxMp; //¸¶³ª ÃÊ±âÈ­
+        playerData.Hp = playerData.MaxHp; //ì²´ë ¥ ì´ˆê¸°í™”
+        playerData.Mp = playerData.MaxMp; //ë§ˆë‚˜ ì´ˆê¸°í™”
 
-        UI_StatusBar.Instance.hpBar.value = playerData.MaxHp;  //Ã¼·Â¹Ù ÃÊ±âÈ­
-        UI_StatusBar.Instance.mpBar.value = playerData.MaxMp;  //¸¶·Â¹Ù ÃÊ±âÈ­
+        UI_StatusBar.Instance.hpBar.value = playerData.MaxHp;  //ì²´ë ¥ë°” ì´ˆê¸°í™”
+        UI_StatusBar.Instance.mpBar.value = playerData.MaxMp;  //ë§ˆë ¥ë°” ì´ˆê¸°í™”
     }
 
     void Update()
     {
-        // Å° °ª ÀÔ·Â
-        fdown = Input.GetButtonDown("Fire1"); //¸¶¿ì½º Å¬¸¯À¸·Î °ø°İ!
-        sdown = Input.GetButtonDown("Fire2"); //¸¶¿ì½º ¿ìÅ¬¸¯À¸·Î ½ºÅ³ »ç¿ë!
+        // í‚¤ ê°’ ì…ë ¥
+        fdown = Input.GetButtonDown("Fire1"); //ë§ˆìš°ìŠ¤ í´ë¦­ìœ¼ë¡œ ê³µê²©!
+        sdown = Input.GetButtonDown("Fire2"); //ë§ˆìš°ìŠ¤ ìš°í´ë¦­ìœ¼ë¡œ ìŠ¤í‚¬ ì‚¬ìš©!
 
-        if (!SceneLoadManager.Instance.isLoading && !playerData.isDie)
-        //·Îµù ÁßÀÌ ¾Æ´Ò ¶§ + PlayerData¿¡¼­ false¸é ÀÌ ÇÔ¼ö ½ÇÇà, true¸é ½ÇÇàX
+        if (!GetComponent<Player_Move>().IsUnReady())
+        //ë¡œë”© ì¤‘ì´ ì•„ë‹ ë•Œ + PlayerDataì—ì„œ falseë©´ ì´ í•¨ìˆ˜ ì‹¤í–‰, trueë©´ ì‹¤í–‰X
         {
-            // ÇÔ¼ö Á¤¸®
-            Attack(); // °ø°İ¿¡ °üÇÑ Å¬·¡½º Ãß°¡!
-            Skill();  // ½ºÅ³ »ç¿ë¿¡ °üÇÑ ÇÔ¼ö
+            // í•¨ìˆ˜ ì •ë¦¬
+            Attack(); // ê³µê²©ì— ê´€í•œ í´ë˜ìŠ¤ ì¶”ê°€!
+            Skill();  // ìŠ¤í‚¬ ì‚¬ìš©ì— ê´€í•œ í•¨ìˆ˜
         }
 
-        // enemy´Â ½£¿¡¼­ Ãâ¸ôÇÏ¹Ç·Î Start¿¡¼­ Ã£À¸¸é nullÀÌ µÈ´Ù.
-        // EnemyÅÂ±×°¡ ºÙ¾îÀÖ´Â ¿ÀºêÁ§Æ®¸¦ º¯¼ö¿¡ ´ã´Â´Ù.
+        // enemyëŠ” ìˆ²ì—ì„œ ì¶œëª°í•˜ë¯€ë¡œ Startì—ì„œ ì°¾ìœ¼ë©´ nullì´ ëœë‹¤.
+        // Enemyíƒœê·¸ê°€ ë¶™ì–´ìˆëŠ” ì˜¤ë¸Œì íŠ¸ë¥¼ ë³€ìˆ˜ì— ë‹´ëŠ”ë‹¤.
         GameObject enemyobjects = GameObject.FindGameObjectWithTag("Enemy");
 
-        // enemyobjects°¡ nullÀÌ ¾Æ´Ï¶ó¸é
+        // enemyobjectsê°€ nullì´ ì•„ë‹ˆë¼ë©´
         if (enemyobjects != null)
         {
-            // PUNCHÅÂ±×ÀÇ ¿ÀºêÁ§Æ® Äİ¶óÀÌ´õ ÄÄÆ÷³ÍÆ®¸¦ ´ã´Â´Ù.
+            // PUNCHíƒœê·¸ì˜ ì˜¤ë¸Œì íŠ¸ ì½œë¼ì´ë” ì»´í¬ë„ŒíŠ¸ë¥¼ ë‹´ëŠ”ë‹¤.
             Punch = GameObject.FindGameObjectWithTag("PUNCH").GetComponent<Collider>();
         }
     }
 
-    // °ø°İ
+    // ê³µê²©
     void Attack()
     {
-        //¸¸¾à UI°¡ Å¬¸¯ÀÌ µÇ¾ú´Ù¸é
+        //ë§Œì•½ UIê°€ í´ë¦­ì´ ë˜ì—ˆë‹¤ë©´
         if (EventSystem.current.IsPointerOverGameObject())
         {
-            //¹Ø¿¡ ³»¿ëÀ» ½ÇÇàÇÏÁö ¸»°í ÀÌ ÇÔ¼ö¸¦ ºüÁ® ³ª°¡¶ó
+            //ë°‘ì— ë‚´ìš©ì„ ì‹¤í–‰í•˜ì§€ ë§ê³  ì´ í•¨ìˆ˜ë¥¼ ë¹ ì ¸ ë‚˜ê°€ë¼
             return;
         }
 
-        //°ø°İ ½ÇÇà
-        // ¸¸¾à Å¬¸¯À» ÇÑ´Ù¸é °ø°İ ¸ğ¼ÇÀÌ ³ª°£´Ù!
+        //ê³µê²© ì‹¤í–‰
+        // ë§Œì•½ í´ë¦­ì„ í•œë‹¤ë©´ ê³µê²© ëª¨ì…˜ì´ ë‚˜ê°„ë‹¤!
         if (fdown)
         {
-            // ÄÚ·çÆ¾À» ÀÌ¿ëÇÏ¿© ½Ã°£ À¯Áö
+            // ì½”ë£¨í‹´ì„ ì´ìš©í•˜ì—¬ ì‹œê°„ ìœ ì§€
             StartCoroutine(EnemyHit());
 
-            Debug.Log("°ø°İ");
-            // ¾Ö´Ï¸ŞÀÌ¼Ç ½ÇÇà
+            Debug.Log("ê³µê²©");
+            // ì• ë‹ˆë©”ì´ì…˜ ì‹¤í–‰
             ani.SetTrigger("doAttack");
-            // °ø°İ Áß ¿òÁ÷ÀÓ ¸ØÃã!
+            // ê³µê²© ì¤‘ ì›€ì§ì„ ë©ˆì¶¤!
             //moveSpeed = 0; 
 
             Player_Data.Instance.audioSource.clip = Player_Data.Instance.audioClips[1];
@@ -105,125 +105,125 @@ public class Player_Combat : MonoBehaviour
         }
     }
 
-    // °ø°İµ¿¾È Ãæµ¹ Áö¿¬ ÄÚ·çÆ¾ ÇÔ¼ö
+    // ê³µê²©ë™ì•ˆ ì¶©ëŒ ì§€ì—° ì½”ë£¨í‹´ í•¨ìˆ˜
     IEnumerator EnemyHit()
     {
-        // ¹«±âÀÇ ¹Ú½º Äİ¶óÀÌ´õÀÇ isTrigger Ã¼Å©
+        // ë¬´ê¸°ì˜ ë°•ìŠ¤ ì½œë¼ì´ë”ì˜ isTrigger ì²´í¬
         boxCollider.isTrigger = true;
 
-        // 1ÃÊ Áö¿¬ ½ÃÅ² µÚ
+        // 1ì´ˆ ì§€ì—° ì‹œí‚¨ ë’¤
         yield return new WaitForSeconds(0.5f);
 
-        // ¹«±â Äİ¶óÀÌ´õÀÇ isTrigger Ã¼Å© ÇØÁ¦
+        // ë¬´ê¸° ì½œë¼ì´ë”ì˜ isTrigger ì²´í¬ í•´ì œ
         boxCollider.isTrigger = false;
     }
 
-    // ÇÃ·¹ÀÌ¾î°¡ °ø°İ´çÇÏ¸é È£ÃâµÇ´Â ÇÔ¼ö
+    // í”Œë ˆì´ì–´ê°€ ê³µê²©ë‹¹í•˜ë©´ í˜¸ì¶œë˜ëŠ” í•¨ìˆ˜
     public void DamageAction(int damage)
     {
-        if (playerData.PlusHp > 0) //º¸È£¸·ÀÌ ÀÖÀ» °æ¿ì
+        if (playerData.PlusHp > 0) //ë³´í˜¸ë§‰ì´ ìˆì„ ê²½ìš°
         {
-            playerData.PlusHp -= damage;          //¿¡³Ê¹ÌÀÇ °ø°İ·Â¸¸Å­ º¸È£¸· hp °¨¼Ò
-            UI_StatusBar.Instance.HpBar2Update(); //º¸È£¸· ½½¶óÀÌ´õ¿¡ ¹İ¿µ
+            playerData.PlusHp -= damage;          //ì—ë„ˆë¯¸ì˜ ê³µê²©ë ¥ë§Œí¼ ë³´í˜¸ë§‰ hp ê°ì†Œ
+            UI_StatusBar.Instance.HpBar2Update(); //ë³´í˜¸ë§‰ ìŠ¬ë¼ì´ë”ì— ë°˜ì˜
 
-            if (damage > playerData.PlusHp)            //µ¥¹ÌÁö°¡ º¸È£¸· hpº¸´Ù Å« °æ¿ì
+            if (damage > playerData.PlusHp)            //ë°ë¯¸ì§€ê°€ ë³´í˜¸ë§‰ hpë³´ë‹¤ í° ê²½ìš°
             {
-                int temp = damage - playerData.PlusHp; //µ¥¹ÌÁö¿¡¼­ º¸È£¸· ÀÜ·®À» Á¦ÇÑ ¼öÄ¡¸¦ °è»ê
+                int temp = damage - playerData.PlusHp; //ë°ë¯¸ì§€ì—ì„œ ë³´í˜¸ë§‰ ì”ëŸ‰ì„ ì œí•œ ìˆ˜ì¹˜ë¥¼ ê³„ì‚°
 
-                playerData.PlusHp = 0;                 //º¸È£¸· hp¸¦ 0À¸·Î ÃÊ±âÈ­
-                UI_StatusBar.Instance.HpBar2Update();  //ÇØ´ç ¼öÄ¡¸¦ ½½¶óÀÌ´õ¿¡ ¹İ¿µ
+                playerData.PlusHp = 0;                 //ë³´í˜¸ë§‰ hpë¥¼ 0ìœ¼ë¡œ ì´ˆê¸°í™”
+                UI_StatusBar.Instance.HpBar2Update();  //í•´ë‹¹ ìˆ˜ì¹˜ë¥¼ ìŠ¬ë¼ì´ë”ì— ë°˜ì˜
 
-                playerData.Hp -= temp;                 //¾Õ¼­ °è»êÇÑ temp°ªÀ» ÇÃ·¹ÀÌ¾îÀÇ Ã¼·Â¿¡¼­ Â÷°¨
-                UI_StatusBar.Instance.HpBarUpdate();   //ÇöÀç ÇÃ·¹ÀÌ¾î hp(%)¸¦ hp ½½¶óÀÌ´õÀÇ value¿¡ ¹İ¿µ
+                playerData.Hp -= temp;                 //ì•ì„œ ê³„ì‚°í•œ tempê°’ì„ í”Œë ˆì´ì–´ì˜ ì²´ë ¥ì—ì„œ ì°¨ê°
+                UI_StatusBar.Instance.HpBarUpdate();   //í˜„ì¬ í”Œë ˆì´ì–´ hp(%)ë¥¼ hp ìŠ¬ë¼ì´ë”ì˜ valueì— ë°˜ì˜
             }
         }
-        else //º¸È£¸·ÀÌ ¾ø´Â °æ¿ì(ÀÏ¹İÀûÀÎ »óÅÂ)
+        else //ë³´í˜¸ë§‰ì´ ì—†ëŠ” ê²½ìš°(ì¼ë°˜ì ì¸ ìƒíƒœ)
         {
-            Debug.Log("PlayerÀÇ HP : " + playerData.Hp);
+            Debug.Log("Playerì˜ HP : " + playerData.Hp);
 
-            playerData.Hp -= damage;             //¿¡³Ê¹ÌÀÇ °ø°İ·Â¸¸Å­ ÇÃ·¹ÀÌ¾îÀÇ Ã¼·ÂÀ» ±ğ´Â´Ù
-            UI_StatusBar.Instance.HpBarUpdate(); //ÇöÀç ÇÃ·¹ÀÌ¾î hp(%)¸¦ hp ½½¶óÀÌ´õÀÇ value¿¡ ¹İ¿µ
+            playerData.Hp -= damage;             //ì—ë„ˆë¯¸ì˜ ê³µê²©ë ¥ë§Œí¼ í”Œë ˆì´ì–´ì˜ ì²´ë ¥ì„ ê¹ëŠ”ë‹¤
+            UI_StatusBar.Instance.HpBarUpdate(); //í˜„ì¬ í”Œë ˆì´ì–´ hp(%)ë¥¼ hp ìŠ¬ë¼ì´ë”ì˜ valueì— ë°˜ì˜
         }
 
-        playerData.Cp += Random.Range(1, 6); //Å¬·¡½º °ÔÀÌÁö È¹µæ
-        UI_StatusBar.Instance.CpBarUpdate(); //½½¶óÀÌ´õ¿¡ ¹İ¿µ
+        playerData.Cp += Random.Range(1, 6); //í´ë˜ìŠ¤ ê²Œì´ì§€ íšë“
+        UI_StatusBar.Instance.CpBarUpdate(); //ìŠ¬ë¼ì´ë”ì— ë°˜ì˜
 
 
-        // ÇÃ·¹ÀÌ¾îÀÇ Ã¼·ÂÀÌ 0º¸´Ù ÀÛ´Ù¸é
+        // í”Œë ˆì´ì–´ì˜ ì²´ë ¥ì´ 0ë³´ë‹¤ ì‘ë‹¤ë©´
         if (playerData.Hp <= 0)
         {
-            Debug.Log("Á×À½");//ÄÜ¼ÖÃ¢¿¡ "Á×À½"Ãâ·Â
+            Debug.Log("ì£½ìŒ");//ì½˜ì†”ì°½ì— "ì£½ìŒ"ì¶œë ¥
 
-            // ÇÃ·¹ÀÌ¾î »óÅÂ¸¦ Á×À½ »óÅÂ·Î º¯°æ
+            // í”Œë ˆì´ì–´ ìƒíƒœë¥¼ ì£½ìŒ ìƒíƒœë¡œ ë³€ê²½
             playerData.isDie = true;
 
-            // ÇÃ·¹ÀÌ¾î ÁÖº¯ limitDetectRange¸¸Å­ÀÇ Äİ¶óÀÌ´õ¸¦ °¨ÁöÇÏ¿© ¹è¿­¿¡ ´ã´Â´Ù.
+            // í”Œë ˆì´ì–´ ì£¼ë³€ limitDetectRangeë§Œí¼ì˜ ì½œë¼ì´ë”ë¥¼ ê°ì§€í•˜ì—¬ ë°°ì—´ì— ë‹´ëŠ”ë‹¤.
             monsters = Physics.OverlapSphere(transform.position, limitDetectRange);
 
-            // ´ã±ä Äİ¶óÀÌ´õ ¼ö¸¸Å­ ¹İº¹ÇÒ ¹İº¹¹®
+            // ë‹´ê¸´ ì½œë¼ì´ë” ìˆ˜ë§Œí¼ ë°˜ë³µí•  ë°˜ë³µë¬¸
             foreach(Collider monster in monsters)
             {
-                // ¸¸¾àÀÇ ´ã±ä ¸ó½ºÅÍÀÇ ÅÂ±×°¡ Enemy¶ó¸é
+                // ë§Œì•½ì˜ ë‹´ê¸´ ëª¬ìŠ¤í„°ì˜ íƒœê·¸ê°€ Enemyë¼ë©´
                 if(monster.gameObject.tag == "Enemy")
                 {
-                    // ±× ¸ó½ºÅÍÀÇ EnemyManagerÀÇ ÄÄÆ÷³ÍÆ® ¾ÈÀÇ PlayerCheck()ÇÔ¼ö¸¦ È£Ãâ
+                    // ê·¸ ëª¬ìŠ¤í„°ì˜ EnemyManagerì˜ ì»´í¬ë„ŒíŠ¸ ì•ˆì˜ PlayerCheck()í•¨ìˆ˜ë¥¼ í˜¸ì¶œ
                     monster.GetComponent<EnemyManager>().PlayerDieAction();
                 }
             }
 
             ani.SetTrigger("doHited");
-            // ÇÇ°İ ¾Ö´Ï¸ŞÀÌ¼Ç ½ÇÇà
+            // í”¼ê²© ì• ë‹ˆë©”ì´ì…˜ ì‹¤í–‰
             sword.enabled = false;
-            //ÇÃ·¹ÀÌ¾î°¡ Á×¾úÀ¸¹Ç·Î swordÄÄÆ÷³ÍÆ®¸¦ ºñÈ°¼ºÈ­ ÇØÁà¼­ Ãæµ¹ÆÇÁ¤ÀÌ ÀÏ¾î³ªÁö¾Êµµ·Ï ÇØ ÁØ´Ù.
+            //í”Œë ˆì´ì–´ê°€ ì£½ì—ˆìœ¼ë¯€ë¡œ swordì»´í¬ë„ŒíŠ¸ë¥¼ ë¹„í™œì„±í™” í•´ì¤˜ì„œ ì¶©ëŒíŒì •ì´ ì¼ì–´ë‚˜ì§€ì•Šë„ë¡ í•´ ì¤€ë‹¤.
             gameObject.GetComponent<CapsuleCollider>().enabled = false;
 
-            //ÇÃ·¹ÀÌ¾îÀÇ Äİ¶óÀÌ´õ°¡ ºñÈ°¼º µÇ¾úÀ¸¹Ç·Î ÇÃ·¹ÀÌ¾î°¡ ¹Ù´ÚÀ» ¶Õ°í °è¼Ó ¶³¾îÁöÁö ¾Êµµ·Ï ¸®Áöµå¹Ùµğ±â´ÉÀ» Á¦¾îÇØÁØ´Ù.
+            //í”Œë ˆì´ì–´ì˜ ì½œë¼ì´ë”ê°€ ë¹„í™œì„± ë˜ì—ˆìœ¼ë¯€ë¡œ í”Œë ˆì´ì–´ê°€ ë°”ë‹¥ì„ ëš«ê³  ê³„ì† ë–¨ì–´ì§€ì§€ ì•Šë„ë¡ ë¦¬ì§€ë“œë°”ë””ê¸°ëŠ¥ì„ ì œì–´í•´ì¤€ë‹¤.
             rigid.useGravity = false;
             rigid.isKinematic = true;
 
-            //ÇÃ·¹ÀÌ¾îÀÇ CapsuleCollider¸¦ ºñÈ°¼ºÈ­ ÇØÁà¼­ "PUNCH"ÅÂ±×¸¦ °¡Áø ¿ÀºêÁ§Æ®¿Í Ãæµ¹Ã³¸®°¡ µÇÁö ¾Êµµ·Ï ÇØÁØ´Ù.
+            //í”Œë ˆì´ì–´ì˜ CapsuleColliderë¥¼ ë¹„í™œì„±í™” í•´ì¤˜ì„œ "PUNCH"íƒœê·¸ë¥¼ ê°€ì§„ ì˜¤ë¸Œì íŠ¸ì™€ ì¶©ëŒì²˜ë¦¬ê°€ ë˜ì§€ ì•Šë„ë¡ í•´ì¤€ë‹¤.
 
             //Destroy(gameObject, 4.5f);
-            //4.5ÃÊ ÈÄ¿¡ ÇÃ·¹ÀÌ¾î Á¦°Å
+            //4.5ì´ˆ í›„ì— í”Œë ˆì´ì–´ ì œê±°
 
-            // PlayerHitEffect ÄÚ·çÆ¾ ÇÔ¼ö È£Ãâ
+            // PlayerHitEffect ì½”ë£¨í‹´ í•¨ìˆ˜ í˜¸ì¶œ
             StartCoroutine(PlayerHitEffect());
         }
     }
 
 
-    // ¸ó½ºÅÍÀÇ °ø°İÀ» ÆÇ´ÜÇÏ±â À§ÇÑ Ãæµ¹ ÆÇÁ¤
+    // ëª¬ìŠ¤í„°ì˜ ê³µê²©ì„ íŒë‹¨í•˜ê¸° ìœ„í•œ ì¶©ëŒ íŒì •
     private void OnTriggerEnter(Collider other)
     {
-        // ¸¸¾à Ãæµ¹ÇÑ ¿ÀºêÁ§Æ®ÀÇ ÅÂ±×°¡ PUNCH¶ó¸é
+        // ë§Œì•½ ì¶©ëŒí•œ ì˜¤ë¸Œì íŠ¸ì˜ íƒœê·¸ê°€ PUNCHë¼ë©´
         if (other.gameObject.tag == "PUNCH")
         {
-            Debug.Log("¸Â¾Ò´Ù");
+            Debug.Log("ë§ì•˜ë‹¤");
 
-            // Ãæµ¹ÇÑ ¿ÀºêÁ§Æ®ÀÇ ºÎ¸ğÀÎ ÄÄÆ÷³ÍÆ® EnemyManager¸¦ ºÒ·¯¿Í ¸ó½ºÅÍÀÇ °ø°İ·ÂÀ» ´ã´Â´Ù.
+            // ì¶©ëŒí•œ ì˜¤ë¸Œì íŠ¸ì˜ ë¶€ëª¨ì¸ ì»´í¬ë„ŒíŠ¸ EnemyManagerë¥¼ ë¶ˆëŸ¬ì™€ ëª¬ìŠ¤í„°ì˜ ê³µê²©ë ¥ì„ ë‹´ëŠ”ë‹¤.
             int monsterAttack = other.gameObject.GetComponentInParent<EnemyManager>().monsterData.Attack;
 
-            // ¸ó½ºÅÍÀÇ °ø°İ·Â¸¸Å­ ÇÃ·¹ÀÌ¾îÀÇ Ã¼·ÂÀ» ±ğ´Â ÇÔ¼ö¸¦ È£ÃâÇÑ´Ù.
+            // ëª¬ìŠ¤í„°ì˜ ê³µê²©ë ¥ë§Œí¼ í”Œë ˆì´ì–´ì˜ ì²´ë ¥ì„ ê¹ëŠ” í•¨ìˆ˜ë¥¼ í˜¸ì¶œí•œë‹¤.
             DamageAction(monsterAttack);
         }
     }
 
-    // ÄÚ·çÆ¾ ÇÔ¼ö
+    // ì½”ë£¨í‹´ í•¨ìˆ˜
     IEnumerator PlayerHitEffect()
     {
-        // 0.75ÃÊ Áö¿¬
+        // 0.75ì´ˆ ì§€ì—°
         yield return new WaitForSeconds(0.75f);
 
         Debug.Log("Game Over");
     }
 
-    //½ºÅ³
+    //ìŠ¤í‚¬
     void Skill()
     {
-        //¸¸¾à UI°¡ Å¬¸¯ÀÌ µÇ¾ú´Ù¸é ¹Ø¿¡ ³»¿ëÀ» ½ÇÇàÇÏÁö ¸»°í ÀÌ ÇÔ¼ö¸¦ ºüÁ® ³ª°¡¶ó
+        //ë§Œì•½ UIê°€ í´ë¦­ì´ ë˜ì—ˆë‹¤ë©´ ë°‘ì— ë‚´ìš©ì„ ì‹¤í–‰í•˜ì§€ ë§ê³  ì´ í•¨ìˆ˜ë¥¼ ë¹ ì ¸ ë‚˜ê°€ë¼
         if (EventSystem.current.IsPointerOverGameObject()) { return; }
 
-        //¿ìÅ¬¸¯ ½Ã ½ºÅ³ ½ÇÇà
+        //ìš°í´ë¦­ ì‹œ ìŠ¤í‚¬ ì‹¤í–‰
         if (sdown) { SkillManager.Instance.ChooseSkill(); }
     }
 }
