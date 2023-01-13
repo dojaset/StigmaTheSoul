@@ -4,101 +4,105 @@ using UnityEngine;
 
 public class Player_Data : Singletone<Player_Data>
 {
-    public PlayerData playerData; //ÇÃ·¹ÀÌ¾î µ¥ÀÌÅÍ
+    public PlayerData playerData; //í”Œë ˆì´ì–´ ë°ì´í„°
 
     public AudioSource audioSource;
     public AudioClip[] audioClips;
 
-    public List<ItemData> potionInven = new(); //¼ÒºñÄ­
-    public List<ItemData> equipInven = new();  //ÀåºñÄ­
-    public List<ItemData> extraInven = new();  //±âÅ¸Ä­
-                                               //È¹µæÇÑ ¾ÆÀÌÅÛÀÇ ItemData ÄÄÆ÷³ÍÆ®¸¦ ´ãÀ» ¸®½ºÆ®(=ÀÎº¥Åä¸®)
+    public List<ItemData> potionInven = new(); //ì†Œë¹„ì¹¸
+    public List<ItemData> equipInven = new();  //ì¥ë¹„ì¹¸
+    public List<ItemData> extraInven = new();  //ê¸°íƒ€ì¹¸
+                                               //íšë“í•œ ì•„ì´í…œì˜ ItemData ì»´í¬ë„ŒíŠ¸ë¥¼ ë‹´ì„ ë¦¬ìŠ¤íŠ¸(=ì¸ë²¤í† ë¦¬)
 
     public void LevelUp()
     {
-        int extra = playerData.Exp - playerData.MaxExp; //³²Àº °æÇèÄ¡´Â ÇöÀç °æÇèÄ¡¿¡¼­ ÃÖ´ë °æÇèÄ¡¸¦ »« °Í
-        playerData.Exp = extra; //ÇÃ·¹ÀÌ¾îÀÇ °æÇèÄ¡¸¦ ³ª¸ÓÁö °æÇèÄ¡·Î º¯°æ
+        int extra = playerData.Exp - playerData.MaxExp; //ë‚¨ì€ ê²½í—˜ì¹˜ëŠ” í˜„ì¬ ê²½í—˜ì¹˜ì—ì„œ ìµœëŒ€ ê²½í—˜ì¹˜ë¥¼ ëº€ ê²ƒ
+        playerData.Exp = extra; //í”Œë ˆì´ì–´ì˜ ê²½í—˜ì¹˜ë¥¼ ë‚˜ë¨¸ì§€ ê²½í—˜ì¹˜ë¡œ ë³€ê²½
+        UI_StatusBar.Instance.ExpBarUpdate(); //ê²¸í—ì¹˜ë°” ì—…ë°ì´íŠ¸
 
-        playerData.Level += 1; //±âÁ¸ ·¹º§¿¡ 1À» ´õÇÔ
-        playerData.MaxExp = playerData.Level * 800; //»õ ÃÖ´ë °æÇèÄ¡ °ªÀº ·¹º§ °ª¿¡ 800À» °öÇÑ °ª
+        playerData.Level += 1; //ê¸°ì¡´ ë ˆë²¨ì— 1ì„ ë”í•¨
+        playerData.MaxExp = playerData.Level * 800; //ìƒˆ ìµœëŒ€ ê²½í—˜ì¹˜ ê°’ì€ ë ˆë²¨ ê°’ì— 800ì„ ê³±í•œ ê°’
+        UI_StatusBar.Instance.LvTextUpdate()(); //ë ˆë²¨ í‘œì‹œë°” ì—…ë°ì´íŠ¸
 
-        playerData.MaxHp = (int)(playerData.MaxHp * 1.2f); //ÃÖ´ë Ã¼·Â°ªÀ» ±âÁ¸ÀÇ 1.2¹è·Î º¯°æ
-        playerData.Hp = playerData.MaxHp; //ÇöÀç Ã¼·ÂÀ» º¯°æµÈ ÃÖ´ë Ã¼·ÂÀ¸·Î º¯°æ
+        playerData.MaxHp = (int)(playerData.MaxHp * 1.2f); //ìµœëŒ€ ì²´ë ¥ê°’ì„ ê¸°ì¡´ì˜ 1.2ë°°ë¡œ ë³€ê²½
+        playerData.Hp = playerData.MaxHp; //í˜„ì¬ ì²´ë ¥ì„ ë³€ê²½ëœ ìµœëŒ€ ì²´ë ¥ìœ¼ë¡œ ë³€ê²½
+        UI_StatusBar.Instance.HpBarUpdate(); //ì²´ë ¥ë°” ì—…ë°ì´íŠ¸
 
-        playerData.MaxMp = (int)(playerData.MaxMp * 1.2f); //ÃÖ´ë ¸¶³ª°ªÀ» ±âÁ¸ÀÇ 1.2¹è·Î º¯°æ
-        playerData.Mp = playerData.MaxMp; //ÇöÀç ¸¶³ª¸¦ º¯°æµÈ ÃÖ´ë ¸¶³ªÀ¸·Î º¯°æ
+        playerData.MaxMp = (int)(playerData.MaxMp * 1.2f); //ìµœëŒ€ ë§ˆë‚˜ê°’ì„ ê¸°ì¡´ì˜ 1.2ë°°ë¡œ ë³€ê²½
+        playerData.Mp = playerData.MaxMp; //í˜„ì¬ ë§ˆë‚˜ë¥¼ ë³€ê²½ëœ ìµœëŒ€ ë§ˆë‚˜ìœ¼ë¡œ ë³€ê²½
+        UI_StatusBar.Instance.MpBarUpdate(); //ë§ˆë‚˜ë°” ì—…ë°ì´íŠ¸
 
-        playerData.oAttack = (int)(playerData.oAttack * 1.2f); //ÃÖ´ë °ø°İ·ÂÀ» ±âÁ¸ÀÇ 1.2¹è·Î º¯°æ
-        playerData.Attack = playerData.oAttack; //ÇöÀç °ø°İ·ÂÀ» º¯°æµÈ ÃÖ´ë °ø°İ·ÂÀ¸·Î º¯°æ
+        playerData.oAttack = (int)(playerData.oAttack * 1.2f); //ìµœëŒ€ ê³µê²©ë ¥ì„ ê¸°ì¡´ì˜ 1.2ë°°ë¡œ ë³€ê²½
+        playerData.Attack = playerData.oAttack; //í˜„ì¬ ê³µê²©ë ¥ì„ ë³€ê²½ëœ ìµœëŒ€ ê³µê²©ë ¥ìœ¼ë¡œ ë³€ê²½
 
-        playerData.oDefence = (int)(playerData.oDefence * 1.2f); //ÃÖ´ë ¹æ¾î·ÂÀ» ±âÁ¸ÀÇ 1.2¹è·Î º¯°æ
-        playerData.Defence = playerData.oDefence; //ÇöÀç ¹æ¾î·ÂÀ» º¯°æµÈ ÃÖ´ë ¹æ¾î·ÂÀ¸·Î º¯°æ
+        playerData.oDefence = (int)(playerData.oDefence * 1.2f); //ìµœëŒ€ ë°©ì–´ë ¥ì„ ê¸°ì¡´ì˜ 1.2ë°°ë¡œ ë³€ê²½
+        playerData.Defence = playerData.oDefence; //í˜„ì¬ ë°©ì–´ë ¥ì„ ë³€ê²½ëœ ìµœëŒ€ ë°©ì–´ë ¥ìœ¼ë¡œ ë³€ê²½
     }
 
     public void CheckItem(GameObject item)
     {
         ItemData itemData = item.GetComponent<Items_Farming>().itemData;
 
-        if (itemData.itemType == 0) { GotPotion(itemData); }     //¼Òºñ ¾ÆÀÌÅÛ È¹µæ
-        else if (itemData.itemType == 1) { GotEquip(itemData); } //Àåºñ ¾ÆÀÌÅÛ È¹µæ
-        else if (itemData.itemType == 2) { GotExtra(itemData); } //±âÅ¸ ¾ÆÀÌÅÛ È¹µæ
-        else { GotCoin(itemData); }                               //ÄÚÀÎ È¹µæ
+        if (itemData.itemType == 0) { GotPotion(itemData); }     //ì†Œë¹„ ì•„ì´í…œ íšë“
+        else if (itemData.itemType == 1) { GotEquip(itemData); } //ì¥ë¹„ ì•„ì´í…œ íšë“
+        else if (itemData.itemType == 2) { GotExtra(itemData); } //ê¸°íƒ€ ì•„ì´í…œ íšë“
+        else { GotCoin(itemData); }                              //ì½”ì¸ íšë“
 
-        //Ä³½Ã ¾ÆÀÌÅÛ ¿©ºÎ´Â boolÅ¸ÀÔ º¯¼ö ItemData.cash·Î È®ÀÎ
+        //ìºì‹œ ì•„ì´í…œ ì—¬ë¶€ëŠ” boolíƒ€ì… ë³€ìˆ˜ ItemData.cashë¡œ í™•ì¸
     }
 
     void GotPotion(ItemData itemData)
     {
-        itemData.count++; //¼ÒÁö·® 1 Up
+        itemData.count++; //ì†Œì§€ëŸ‰ 1 Up
 
-        if (!potionInven.Contains(itemData)) //¸®½ºÆ®¿¡ ÀÌ ¾ÆÀÌÅÛÀÌ ¾ø´Ù¸é
+        if (!potionInven.Contains(itemData)) //ë¦¬ìŠ¤íŠ¸ì— ì´ ì•„ì´í…œì´ ì—†ë‹¤ë©´
         {
-            potionInven.Add(itemData); //¸®½ºÆ®¿¡ ¾ÆÀÌÅÛµ¥ÀÌÅÍ Ãß°¡
-            potionInven.TrimExcess();  //ºÒÇÊ¿äÇÑ ¸Ş¸ğ¸® ¹İÈ¯
+            potionInven.Add(itemData); //ë¦¬ìŠ¤íŠ¸ì— ì•„ì´í…œë°ì´í„° ì¶”ê°€
+            potionInven.TrimExcess();  //ë¶ˆí•„ìš”í•œ ë©”ëª¨ë¦¬ ë°˜í™˜
         }
 
-        //ÄÜ¼ÖÃ¢¿¡ È¹µæ ¾ÆÀÌÅÛ ¼³¸í Ç¥½Ã
-        Debug.Log(itemData.itemName + " º¸À¯·®: " + itemData.count);
+        //ì½˜ì†”ì°½ì— íšë“ ì•„ì´í…œ ì„¤ëª… í‘œì‹œ
+        Debug.Log(itemData.itemName + " ë³´ìœ ëŸ‰: " + itemData.count);
         Debug.Log(itemData.itemInfo);
     }
 
     void GotEquip(ItemData itemData)
     {
-        equipInven.Add(itemData); //¸®½ºÆ®¿¡ ¾ÆÀÌÅÛµ¥ÀÌÅÍ Ãß°¡
-        equipInven.TrimExcess();  //ºÒÇÊ¿äÇÑ ¸Ş¸ğ¸® ¹İÈ¯
+        equipInven.Add(itemData); //ë¦¬ìŠ¤íŠ¸ì— ì•„ì´í…œë°ì´í„° ì¶”ê°€
+        equipInven.TrimExcess();  //ë¶ˆí•„ìš”í•œ ë©”ëª¨ë¦¬ ë°˜í™˜
 
-        //ÄÜ¼ÖÃ¢¿¡ È¹µæ ¾ÆÀÌÅÛ ¼³¸í Ç¥½Ã
+        //ì½˜ì†”ì°½ì— íšë“ ì•„ì´í…œ ì„¤ëª… í‘œì‹œ
         Debug.Log(itemData.itemName);
         Debug.Log(itemData.itemInfo);
     }
 
     void GotExtra(ItemData itemData)
     {
-        itemData.count++; //¼ÒÁö·® 1 Up
+        itemData.count++; //ì†Œì§€ëŸ‰ 1 Up
 
-        if (!extraInven.Contains(itemData)) //¸®½ºÆ®¿¡ ÀÌ ¾ÆÀÌÅÛÀÌ ¾ø´Ù¸é
+        if (!extraInven.Contains(itemData)) //ë¦¬ìŠ¤íŠ¸ì— ì´ ì•„ì´í…œì´ ì—†ë‹¤ë©´
         {
-            extraInven.Add(itemData); //¸®½ºÆ®¿¡ ¾ÆÀÌÅÛµ¥ÀÌÅÍ Ãß°¡
-            extraInven.TrimExcess();  //ºÒÇÊ¿äÇÑ ¸Ş¸ğ¸® ¹İÈ¯
+            extraInven.Add(itemData); //ë¦¬ìŠ¤íŠ¸ì— ì•„ì´í…œë°ì´í„° ì¶”ê°€
+            extraInven.TrimExcess();  //ë¶ˆí•„ìš”í•œ ë©”ëª¨ë¦¬ ë°˜í™˜
         }
 
-        //ÄÜ¼ÖÃ¢¿¡ È¹µæ ¾ÆÀÌÅÛ ¼³¸í Ç¥½Ã
-        Debug.Log(itemData.itemName + " º¸À¯·®: " + itemData.count);
+        //ì½˜ì†”ì°½ì— íšë“ ì•„ì´í…œ ì„¤ëª… í‘œì‹œ
+        Debug.Log(itemData.itemName + " ë³´ìœ ëŸ‰: " + itemData.count);
         Debug.Log(itemData.itemInfo);
     }
 
     void GotCoin(ItemData itemData)
     {
-        //·£´ıÀ¸·Î È¹µæ ÄÚÀÎ ÁöÁ¤
-        //±âº»¼öÄ¡ * ÇÃ·¹ÀÌ¾î ·¹º§ * 0.8 ~ 1.2¸¦ Á¤¼ö°ªÀ¸·Î º¯È¯ÇÑ °ª
-        //¿¹) (int)(100(±âº»¼öÄ¡) * ÇÃ·¹ÀÌ¾î ·¹º§ 10 * ·£´ı°ª 0.9) = 900
+        //ëœë¤ìœ¼ë¡œ íšë“ ì½”ì¸ ì§€ì •
+        //ê¸°ë³¸ìˆ˜ì¹˜ * í”Œë ˆì´ì–´ ë ˆë²¨ * 0.8 ~ 1.2ë¥¼ ì •ìˆ˜ê°’ìœ¼ë¡œ ë³€í™˜í•œ ê°’
+        //ì˜ˆ) (int)(100(ê¸°ë³¸ìˆ˜ì¹˜) * í”Œë ˆì´ì–´ ë ˆë²¨ 10 * ëœë¤ê°’ 0.9) = 900
         int price = (int)(itemData.price * playerData.Level * Random.Range(0.8f, 1.2f));
 
-        playerData.Money += price; //¼ÒÁö±İ¿¡ È¹µæ ÄÚÀÎÀ» ´õÇØÁØ´Ù.
+        playerData.Money += price; //ì†Œì§€ê¸ˆì— íšë“ ì½”ì¸ì„ ë”í•´ì¤€ë‹¤.
 
         FindObjectOfType<InventoryUI>().UpdateMoney();
 
-        Debug.Log("È¹µæ ÄÚÀÎ: " + price); //ÄÜ¼ÖÃ¢¿¡ È¹µæ ÄÚÀÎ Ç¥½Ã
-        Debug.Log("ÃÑ ¼ÒÁö±İ: " + playerData.Money); //ÄÜ¼ÖÃ¢¿¡ ¼ÒÁö±İ Ç¥½Ã
+        Debug.Log("íšë“ ì½”ì¸: " + price); //ì½˜ì†”ì°½ì— íšë“ ì½”ì¸ í‘œì‹œ
+        Debug.Log("ì´ ì†Œì§€ê¸ˆ: " + playerData.Money); //ì½˜ì†”ì°½ì— ì†Œì§€ê¸ˆ í‘œì‹œ
     }
 }
