@@ -22,7 +22,7 @@ public class Player_Data : Singletone<Player_Data>
 
         playerData.Level += 1; //기존 레벨에 1을 더함
         playerData.MaxExp = playerData.Level * 800; //새 최대 경험치 값은 레벨 값에 800을 곱한 값
-        UI_StatusBar.Instance.LvTextUpdate()(); //레벨 표시바 업데이트
+        UI_StatusBar.Instance.LvTextUpdate(); //레벨 표시바 업데이트
 
         playerData.MaxHp = (int)(playerData.MaxHp * 1.2f); //최대 체력값을 기존의 1.2배로 변경
         playerData.Hp = playerData.MaxHp; //현재 체력을 변경된 최대 체력으로 변경
