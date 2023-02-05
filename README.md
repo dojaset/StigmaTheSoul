@@ -1,5 +1,4 @@
-# Stigma -The Soul-
- [![StigmaTitle2](https://user-images.githubusercontent.com/112161245/216809545-b5501510-6321-4739-b995-dad4df110310.png)](https://youtu.be/5lYQKiBBNw4)
+# [Stigma -The Soul-](https://youtu.be/5lYQKiBBNw4)
 - **시기:** 2022. 09. 24 → 2023. 01. 14
 - **인원:** HC#8W(5→4명)
 - **개발 환경:** Unity
