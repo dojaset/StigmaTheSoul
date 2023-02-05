@@ -1,10 +1,10 @@
 # Stigma -The Soul-
+ [![StigmaTitle2](https://user-images.githubusercontent.com/112161245/216809545-b5501510-6321-4739-b995-dad4df110310.png)](https://youtu.be/5lYQKiBBNw4)
 - **시기:** 2022. 09. 24 → 2023. 01. 14
 - **인원:** HC#8W(5→4명)
 - **개발 환경:** Unity
 - [**전체 스크립트**](https://github.com/doldol2626/Stigma)(현 레포지트리에는 본인이 작성, 수정한 코드만 업로드되어 있음)
-- [플레이 영상](https://www.youtube.com/embed/5lYQKiBBNw4)
- 
+
 ## ✍️ 요약
 - 성인을 타겟으로 한 다크 판타지 RPG의 데모 버전
 - 직업학교 동기들과 함께 수업 시간에 **배운 내용의 실질적인 활용**을 목표로 함
