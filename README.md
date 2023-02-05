@@ -3,6 +3,7 @@
 - **인원:** HC#8W(5→4명)
 - **개발 환경:** Unity
 - [**전체 스크립트**](https://github.com/doldol2626/Stigma)(현 레포지트리에는 본인이 작성, 수정한 코드만 업로드되어 있음)
+- [플레이 영상](https://www.youtube.com/embed/5lYQKiBBNw4)
  
 ## ✍️ 요약
 - 성인을 타겟으로 한 다크 판타지 RPG의 데모 버전
